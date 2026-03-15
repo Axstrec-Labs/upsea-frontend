@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/@free-side/audioworklet-polyfill/dist/audioworklet-polyfill.js" type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSea | mobile scanner</title>
+    <link rel="stylesheet" href="mobile.css"/>
+</head>
+<body>
+    <div class="ScanContainer">
+        <canvas id="defaultCanvas" class="p5Canvas"></canvas>
+        <button id="btnScan" class="ScanButton">SCAN</button>
+    </div>
+    <div id="resultWindow" class="ResultWindow">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/addons/p5.sound.min.js"></script>
+    <script src="sketch.js"></script>
+</body>
+</html>

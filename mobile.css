@@ -1,0 +1,46 @@
+html, body{
+    margin: 0;
+    padding: 0;
+}
+
+canvas{
+    display:block;
+}
+
+.ScanContainer{
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+.ScanButton{
+    margin: auto;
+    width: 20%;
+    display: inline-block;
+    color: white;
+    background-color: brown;
+    border-radius: 5px;
+    border: 1px solid gray;
+    padding: 5px 3px;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari, Chrome, Opera */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Standard */
+}
+
+.ScanButton:hover{
+   background-color: crimson; 
+   cursor: pointer;
+}
+
+.ResultWindow{
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 100px;
+    border: 1px solid black;
+    margin: auto;
+    width: fit-content;
+}
