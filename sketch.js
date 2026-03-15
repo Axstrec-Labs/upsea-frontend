@@ -27,17 +27,17 @@ let dotSpeed = 80
 let dotDirection = 1 * dotSpeed
 let dotPos = readArea.startX
 
-function startScan(){
-    isScanning = !isScanning
+function startScan(c){
+    isScanning = c
     isScanSuccessful = false
 }
 
 btnScan.addEventListener("pointerdown", () => {
-    startScan()
+    startScan(true)
 })
 
 btnScan.addEventListener("pointerup", () => {
-    startScan()
+    startScan(false)
 })
 
 btnSwitchCamera.addEventListener("pointerdown", () => {
