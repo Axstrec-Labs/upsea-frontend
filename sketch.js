@@ -45,7 +45,8 @@ btnSwitchCamera.addEventListener("pointerdown", () => {
     let options = {
         video: { 
             facingMode: { exact: "environment" } 
-        } 
+        },
+        audio: false
     };
     capture = createCapture(options);
     capture.hide();
