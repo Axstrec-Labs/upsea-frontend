@@ -4,9 +4,9 @@ let render;
 
 let canvasSize = {width: 512, height: 512}
 let readArea = {
-    startX: canvasSize.width/2 - canvasSize.width * 0.28, 
+    startX: canvasSize.width/2 - canvasSize.width * 0.35, 
     startY: canvasSize.height/2 - canvasSize.height * 0.1,
-    endX: canvasSize.width/2 + canvasSize.width * 0.28,
+    endX: canvasSize.width/2 + canvasSize.width * 0.35,
     endY: canvasSize.height/2 + canvasSize.height * 0.1
 }
 let xMultiplier = 1
@@ -42,13 +42,13 @@ btnScan.addEventListener("pointerup", () => {
 
 btnSwitchCamera.addEventListener("pointerdown", () => {
     capture.remove();
-    let options = {
+    let backCamera = {
         video: { 
             facingMode: { exact: "environment" } 
         },
         audio: false
     };
-    capture = createCapture(options);
+    capture = createCapture(backCamera);
     capture.hide();
 })
 
