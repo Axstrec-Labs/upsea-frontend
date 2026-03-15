@@ -235,6 +235,7 @@ function draw() {
                 if(code != null){
                     if(code !== "8"){
                         result += code
+                        resultWindow.innerHTML = `<p> (${resultIndex}) result: ${result} ${notes}` + resultWindow.innerHTML
                     }
                 }else{
                     notes = "(Not fully detected)"
