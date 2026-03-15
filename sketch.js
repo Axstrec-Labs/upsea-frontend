@@ -19,6 +19,7 @@ let resultIndex = 1
 
 let resultWindow = document.getElementById("resultWindow")
 let btnScan = document.getElementById("btnScan")
+let btnSwitchCamera = document.getElementById("btnSwitchCamera")
 let eltCanvas = document.getElementById("defaultCanvas")
 
 // Animation
@@ -31,12 +32,23 @@ function startScan(){
     isScanSuccessful = false
 }
 
-btnScan.addEventListener("mousedown", () => {
+btnScan.addEventListener("pointerdown", () => {
     startScan()
 })
 
-btnScan.addEventListener("mouseup", () => {
+btnScan.addEventListener("pointerup", () => {
     startScan()
+})
+
+btnSwitchCamera.addEventListener("pointerdown", () => {
+    capture.remove();
+    let options = {
+        video: { 
+            facingMode: { exact: "environment" } 
+        } 
+    };
+    capture = createCapture(options);
+    capture.hide();
 })
 
 // ======== UTILS ======= 
