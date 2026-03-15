@@ -251,6 +251,7 @@ function draw() {
             isScanSuccessful = true
             resultWindow.innerHTML = `<p> (${resultIndex}) result: ${result} ${notes}` + resultWindow.innerHTML
             resultIndex += 1
+            alert(result)
         }
 
         console.log("The barcode says: ", result)
