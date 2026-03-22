@@ -46,7 +46,6 @@ btnSwitchCamera.addEventListener("pointerdown", () => {
     };
     capture = createCapture(backCamera);
     capture.hide();
-    init = false;
 })
 
 function LogToResultWindow(str){
@@ -155,6 +154,16 @@ function getPixel(videoCapture, x, y){
 btnScan.addEventListener("click", () => {
     isScanning = true
     isScanSuccessful = false
+    // Creating threshold image
+    xMultiplier = capture.width / canvasSize.width
+    yMultiplier = capture.height / canvasSize.height
+    // Mapping read area to capture size read area
+    cReadArea.startX = Math.round(readArea.startX * xMultiplier)
+    cReadArea.startY = Math.round(readArea.startY * yMultiplier)
+    cReadArea.endX = Math.round(readArea.endX * xMultiplier)
+    cReadArea.endY = Math.round(readArea.endY * yMultiplier)
+
+    LogToResultWindow(JSON.stringify(cReadArea))
 
     btnScan.innerText = "Scanning..."
 
@@ -251,16 +260,7 @@ function setup() {
 function draw() {
     // Late update
     if(!init){
-        // Creating threshold image
-        xMultiplier = capture.width / canvasSize.width
-        yMultiplier = capture.height / canvasSize.height
-        // Mapping read area to capture size read area
-        cReadArea.startX = Math.round(readArea.startX * xMultiplier)
-        cReadArea.startY = Math.round(readArea.startY * yMultiplier)
-        cReadArea.endX = Math.round(readArea.endX * xMultiplier)
-        cReadArea.endY = Math.round(readArea.endY * yMultiplier)
-
-        LogToResultWindow(JSON.stringify(cReadArea))
+        
 
         init = true
     }
