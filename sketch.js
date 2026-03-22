@@ -3,7 +3,7 @@ let canvas;
 let render;
 let barcodeProcessor;
 
-let canvasSize = {width: 512, height: 512}
+let canvasSize = {width: 480, height: 640}
 let readArea = {
     startX: canvasSize.width/2 - canvasSize.width * 0.35, 
     startY: canvasSize.height/2 - canvasSize.height * 0.1,
@@ -45,11 +45,10 @@ btnSwitchCamera.addEventListener("pointerdown", () => {
         audio: false
     };
     capture = createCapture(backCamera);
-    capture.hide();
 })
 
 function LogToResultWindow(str){
-    resultWindow.innerHTML = `(${resultIndex}) ` + str + resultWindow.innerHTML
+    resultWindow.innerHTML = `<p>(${resultIndex}) ` + str + "</p>" + resultWindow.innerHTML
     resultIndex += 1
 }
 
@@ -65,9 +64,8 @@ class BarcodeProcessor{
 
     // Only processing reading area
     Capture(image){
-        this.image = image
         image.loadPixels()
-
+        
         this.pixels = image.pixels
         this.w = image.width
         this.h = image.height
@@ -80,17 +78,17 @@ class BarcodeProcessor{
         console.log(this.intImage.length, this.w, this.h)
 
         let sum = 0
-        for(let y = 0; y < this.h; y++){                    
+        for(let x = 0; x < this.w; x++){                    
             sum = 0
-            for(let x = 0; x < this.w; x++){
+            for(let y = 0; y < this.h; y++){
                 let pos = (x + y * this.w) * 4
                 let pixel = Math.round((this.pixels[pos] + this.pixels[pos + 1] + this.pixels[pos + 2]) / 3)
                 sum += pixel
 
-                if(y == 0){
+                if(x == 0){
                     this.intImage[(x + y * this.w)] = sum
                 }else{
-                    this.intImage[(x + y * this.w)] = this.intImage[(x + (y-1) * this.w)] + sum
+                    this.intImage[(x + y * this.w)] = this.intImage[((x-1) + y * this.w)] + sum
                 }
             }
         }
@@ -99,25 +97,26 @@ class BarcodeProcessor{
 
     // Performing adaptive binarization before decoding
     // using adaptive threshold - gaussian 
-    Binarize(xBlockSize, yBlockSize, sensitivity){
+    Binarize(blockSize, sensitivity){
         if(this.intImage.length == 0){
             console.error("Please generate an integral image first using GetIntegralImage()")
         }
 
-        for(let y = 0; y < this.h; y++){
-            for(let x = 0; x < this.w; x++){
-                let x1 = Math.round(x - xBlockSize / 2)
-                let x2 = Math.round(x + xBlockSize / 2)
-                let y1 = Math.round(y - yBlockSize / 2)
-                let y2 = Math.round(y + yBlockSize / 2)
+        for(let x = 0; x < this.w; x++){
+            for(let y = 0; y < this.h; y++){
+                let x1 = Math.round(x - blockSize / 2)
+                let x2 = Math.round(x + blockSize / 2)
+                let y1 = Math.round(y - blockSize / 2)
+                let y2 = Math.round(y + blockSize / 2)
 
-                x1 = x1 < 0 ? 0 : x1 > this.w ? this.w-1 : x1
-                x2 = x2 < 0 ? 0 : x2 > this.w ? this.w-1 : x2
-                y1 = y1 < 0 ? 0 : y1 > this.h ? this.h-1 : y1
-                y2 = y2 < 0 ? 0 : y2 > this.h ? this.h-1 : y2
-
+                x1 = x1 < 1 ? 1 : x1 >= this.w ? this.w-1 : x1
+                x2 = x2 < 1 ? 1 : x2 >= this.w ? this.w-1 : x2
+                y1 = y1 < 1 ? 1 : y1 >= this.h ? this.h-1 : y1
+                y2 = y2 < 1 ? 1 : y2 >= this.h ? this.h-1 : y2
+                
+                
                 let count = (x2-x1) * (y2-y1)
-                let sum = this.intImage[x2 + y2 * this.w] - this.intImage[x2 + (y1-1) * this.w] - this.intImage[(x1-1) + y2 * this.w] + this.intImage[(x1-1) + (y1-1) * this.w]
+                let sum = this.intImage[(x2 + y2 * this.w)] - this.intImage[(x2 + (y1-1) * this.w)] - this.intImage[((x1-1) + y2 * this.w)] + this.intImage[((x1-1) + (y1-1) * this.w)]
 
                 let pos = (x + y * this.w) * 4
                 let pixel = Math.round((this.pixels[pos] + this.pixels[pos + 1] + this.pixels[pos + 2]) / 3)
@@ -129,7 +128,6 @@ class BarcodeProcessor{
                     this.bImage.set(x, y, 255)
                 }
 
-                // console.log(x1,y1,x2,y2)
             }
         }
 
@@ -151,6 +149,7 @@ function getPixel(videoCapture, x, y){
     return [r,g,b]
 }
 
+// SCAN EVENT
 btnScan.addEventListener("click", () => {
     isScanning = true
     isScanSuccessful = false
@@ -158,10 +157,10 @@ btnScan.addEventListener("click", () => {
     xMultiplier = capture.width / canvasSize.width
     yMultiplier = capture.height / canvasSize.height
     // Mapping read area to capture size read area
-    cReadArea.startX = Math.round(readArea.startX * xMultiplier)
-    cReadArea.startY = Math.round(readArea.startY * yMultiplier)
-    cReadArea.endX = Math.round(readArea.endX * xMultiplier)
-    cReadArea.endY = Math.round(readArea.endY * yMultiplier)
+    cReadArea.startX = (readArea.startX * capture.width) / canvas.width
+    cReadArea.startY = (readArea.startY * capture.height) / canvas.height
+    cReadArea.endX = (readArea.endX * capture.width) / canvas.width
+    cReadArea.endY = (readArea.endY * capture.height) / canvas.height
 
     LogToResultWindow(JSON.stringify(cReadArea))
 
@@ -170,7 +169,7 @@ btnScan.addEventListener("click", () => {
     let readRegion = capture.get(cReadArea.startX, cReadArea.startY, cReadArea.endX - cReadArea.startX, cReadArea.endY - cReadArea.startY)
     barcodeProcessor.Capture(readRegion)
     barcodeProcessor.GetIntegralImage()
-    barcodeProcessor.Binarize(128, 8, 0.25)
+    barcodeProcessor.Binarize(128, 0.15)
 
     btnScan.innerText = "SCAN"
     isScanning = false
@@ -249,7 +248,6 @@ function setup() {
 
     // camera and start capturing video.
     capture = createCapture(VIDEO);
-    capture.hide()
 
     barcodeProcessor = new BarcodeProcessor()
     
@@ -260,8 +258,6 @@ function setup() {
 function draw() {
     // Late update
     if(!init){
-        
-
         init = true
     }
 
