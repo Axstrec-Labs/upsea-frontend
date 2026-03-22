@@ -46,7 +46,13 @@ btnSwitchCamera.addEventListener("pointerdown", () => {
     };
     capture = createCapture(backCamera);
     capture.hide();
+    init = false;
 })
+
+function LogToResultWindow(str){
+    resultWindow.innerHTML = `(${resultIndex}) ` + str + resultWindow.innerHTML
+    resultIndex += 1
+}
 
 class BarcodeProcessor{
     pixels = [];
@@ -249,10 +255,12 @@ function draw() {
         xMultiplier = capture.width / canvasSize.width
         yMultiplier = capture.height / canvasSize.height
         // Mapping read area to capture size read area
-        cReadArea.startX = readArea.startX * xMultiplier
-        cReadArea.startY = readArea.startY * yMultiplier
-        cReadArea.endX = readArea.endX * xMultiplier
-        cReadArea.endY = readArea.endY * yMultiplier
+        cReadArea.startX = Math.round(readArea.startX * xMultiplier)
+        cReadArea.startY = Math.round(readArea.startY * yMultiplier)
+        cReadArea.endX = Math.round(readArea.endX * xMultiplier)
+        cReadArea.endY = Math.round(readArea.endY * yMultiplier)
+
+        LogToResultWindow(JSON.stringify(cReadArea))
 
         init = true
     }
@@ -263,8 +271,6 @@ function draw() {
     image(capture, 0,0, canvasSize.width, canvasSize.height)
 
     if(isScanning && frameCount % 24 == 0 && !isScanSuccessful){
-        
-
         let readLine = []
         let codeDetected = false
         let lastBit = 255
