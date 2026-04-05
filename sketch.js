@@ -221,13 +221,10 @@ class BarcodeProcessor{
                 if(code != null){
                     if(code !== "8"){
                         result += code
-                        resultWindow.innerHTML = `<p> (${resultIndex}) result: ${result} ${notes}` + resultWindow.innerHTML
                     }
                 }else{
-                    notes = "(Not fully detected)"
-                }
-                
-                
+                    throw new Error("Issue decoding the barcode");
+                } 
             }catch(e){
                 console.error(e)
                 isScanSuccessful = false
@@ -237,8 +234,7 @@ class BarcodeProcessor{
 
         if(result !== ""){
             isScanSuccessful = true
-            resultWindow.innerHTML = `<p> (${resultIndex}) result: ${result} ${notes}` + resultWindow.innerHTML
-            resultIndex += 1
+            LogToResultWindow(result)
         }
 
         console.log("The barcode says: ", result)
@@ -350,8 +346,6 @@ btnScan.addEventListener("click", () => {
     isScanning = false
 })
 
-
-
 function setup() {
     canvas = createCanvas(canvasSize.width, canvasSize.height, P2D, eltCanvas);
     drawingContext.willReadFrequently = true
@@ -363,7 +357,7 @@ function setup() {
     barcodeProcessor = new BarcodeProcessor()
     
     // Capping the framerate for heating issues
-    frameRate(6);
+    // frameRate(6);
 }
 
 function draw() {
